@@ -1,7 +1,7 @@
 services:
   app:
-    #image:
-    build: .
+    image: vahtigenc/python-cicd:v$CI_PIPELINE_IID
+    #build: .
     ports:
       - "8080:8080"
     command: python3 app.py
