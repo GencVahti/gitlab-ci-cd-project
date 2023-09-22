@@ -1,6 +1,7 @@
 stages:
     - test
     - build_stage
+    - push_stage
     - deploy_stage
 
 test_server:
@@ -15,20 +16,26 @@ test_server:
     tags:
         - public    
 
-
 build:
     stage: build_stage
     script:
         - docker --version
-        - docker build . -t vahtigenc/python-cicd:v$CI_PIPELINE_IID
+        - docker build . -t $DOCKER_HUB_USER/python-cicd:v$CI_PIPELINE_IID
     tags:
         - public
 
+push:
+    stage: push_stage
+    script:
+        - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD
+        - docker push $DOCKER_HUB_USER/python-cicd:v$CI_PIPELINE_IID
+    tags:
+        - public
 
 deploy:
     stage: deploy_stage
     script:
+        - docker-compose down -v
         - docker-compose up -d
     tags:
         - public
-
